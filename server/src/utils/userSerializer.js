@@ -1,0 +1,21 @@
+export const sanitizeUser = (user) => ({
+  id: user.id,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  username: user.username,
+  email: user.email,
+  gender: user.gender,
+  role: user.role,
+  isEmailVerified: user.isEmailVerified,
+  displayFullName: user.displayFullName,
+  maritalStatus: user.maritalStatus,
+  dateOfBirth: user.dateOfBirth,
+  currentJob: user.currentJob,
+  bio: user.bio,
+  avatarUrl: user.avatarUrl,
+  facebookUrl: user.facebookUrl,
+  instagramUrl: user.instagramUrl,
+  otherContactMethod: user.otherContactMethod,
+  contactEmailVisible: user.contactEmailVisible,
+  createdAt: user.createdAt
+})

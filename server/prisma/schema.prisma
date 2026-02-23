@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  // url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String   @id @default(cuid())
+  firstName            String
+  lastName             String
+  username             String   @unique
+  email                String   @unique
+  passwordHash         String
+  gender               Gender
+  role                 Role     @default(USER)
+  isEmailVerified      Boolean  @default(false)
+  displayFullName      Boolean  @default(true)
+  isBanned             Boolean  @default(false)
+  bannedUntil          DateTime?
+  suspendReason        String?
+  tokenVersion         Int      @default(0)
+
+  maritalStatus        String?
+  dateOfBirth          DateTime?
+  currentJob           String?
+  bio                  String?
+  avatarUrl            String?
+  facebookUrl          String?
+  instagramUrl         String?
+  otherContactMethod   String?
+  contactEmail         String?
+  contactEmailVisible  Boolean  @default(false)
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  refreshTokens        RefreshToken[]
+  emailTokens          EmailVerificationToken[]
+  ad                   Ad?
+  reportsMade          Report[] @relation("ReportsMade")
+  reportsReceived      Report[] @relation("ReportsReceived")
+  auditLogs            AuditLog[]
+}
+
+model Ad {
+  id               String   @id @default(cuid())
+  relationshipType RelationshipType
+  title            String
+  description      String
+  status           AdStatus @default(draft)
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  reports          Report[]
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  reason       String
+  description  String?
+  reporterId   String
+  reporter     User     @relation("ReportsMade", fields: [reporterId], references: [id])
+  reportedUserId String?
+  reportedUser   User?   @relation("ReportsReceived", fields: [reportedUserId], references: [id])
+  adId         String?
+  ad           Ad?      @relation(fields: [adId], references: [id])
+  status       ReportStatus @default(pending)
+  createdAt    DateTime @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
+  targetId  String?
+  createdAt DateTime @default(now())
+}
+
+model BlockedIP {
+  id        String   @id @default(cuid())
+  ip        String   @unique
+  createdAt DateTime @default(now())
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum RelationshipType {
+  long_term
+  short_term
+}
+
+enum AdStatus {
+  draft
+  active
+  paused
+  deleted
+  suspended_by_admin
+}
+
+enum ReportStatus {
+  pending
+  reviewed
+  rejected
+}
