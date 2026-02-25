@@ -193,7 +193,7 @@ export default function ProfilePage() {
   const activeStyle =
     "!border-[var(--base-color)] bg-[var(--base-color)]/10 !text-[var(--base-color)]";
 
-  const getStatusClass = (status) => (ad.status === status ? activeStyle : "");
+  const getStatusClass = (status) => (ad.status === status ? activeStyle : "!text-zinc-700");
 
   return (
     <section className="py-16 lg:py-24 bg-white">
@@ -647,7 +647,7 @@ export default function ProfilePage() {
             </Button>
 
             {ad && (
-              <div className="flex flex-wrap gap-4 pt-4 border-t">
+              <div className="flex flex-wrap gap-4 pt-4 border-t border-zinc-200">
                 <Button
                   variant="outline"
                   disabled={!isEmailVerified}
