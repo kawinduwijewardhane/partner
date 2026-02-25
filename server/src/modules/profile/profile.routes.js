@@ -20,7 +20,24 @@ export default async function (app) {
           age: calculateAge(updated.dateOfBirth),
           currentJob: updated.currentJob,
           bio: updated.bio,
-          avatarUrl: updated.avatarUrl,
+          avatarUrl: updated.avatarUrl
+            ? `${updated.avatarUrl}?v=${updated.updatedAt.getTime()}`
+            : null,
+
+          facebookUrl: updated.facebookUrl,
+          instagramUrl: updated.instagramUrl,
+          githubUrl: updated.githubUrl,
+          threadsUrl: updated.threadsUrl,
+          linkedinUrl: updated.linkedinUrl,
+          twitterUrl: updated.twitterUrl,
+          youtubeUrl: updated.youtubeUrl,
+
+          whatsappNumber: updated.whatsappNumber,
+          phoneNumber: updated.phoneNumber,
+
+          contactEmail: updated.contactEmail,
+
+          profileVisibility: updated.profileVisibility,
         },
       },
     });

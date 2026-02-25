@@ -14,6 +14,7 @@ export const env = {
   EMAIL_PASS: process.env.EMAIL_PASS,
   EMAIL_FROM: process.env.EMAIL_FROM,
   FRONTEND_VERIFY_URL: process.env.FRONTEND_VERIFY_URL,
+  FRONTEND_RESET_URL: process.env.FRONTEND_RESET_URL,
   CDN_SSH_HOST: process.env.CDN_SSH_HOST,
   CDN_SSH_USER: process.env.CDN_SSH_USER,
   CDN_UPLOAD_PATH: process.env.CDN_UPLOAD_PATH,

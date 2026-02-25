@@ -8,69 +8,115 @@ datasource db {
 }
 
 model User {
-  id                   String   @id @default(cuid())
-  firstName            String
-  lastName             String
-  username             String   @unique
-  email                String   @unique
-  passwordHash         String
-  gender               Gender
-  role                 Role     @default(USER)
-  isEmailVerified      Boolean  @default(false)
-  displayFullName      Boolean  @default(true)
-  isBanned             Boolean  @default(false)
-  bannedUntil          DateTime?
-  suspendReason        String?
-  tokenVersion         Int      @default(0)
+  id              String    @id @default(cuid())
+  firstName       String
+  lastName        String
+  username        String    @unique
+  email           String    @unique
+  passwordHash    String
+  gender          Gender
+  role            Role      @default(USER)
+  isEmailVerified Boolean   @default(false)
+  isVerified      Boolean   @default(false)
+  verifiedAt      DateTime?
+  verifiedBy      String?
+  displayFullName Boolean   @default(true)
+  isBanned        Boolean   @default(false)
+  bannedUntil     DateTime?
+  suspendReason   String?
+  tokenVersion    Int       @default(0)
 
-  maritalStatus        String?
-  dateOfBirth          DateTime?
-  currentJob           String?
-  bio                  String?
-  avatarUrl            String?
-  facebookUrl          String?
-  instagramUrl         String?
-  otherContactMethod   String?
-  contactEmail         String?
-  contactEmailVisible  Boolean  @default(false)
+  profileVisibility ProfileVisibility @default(public)
 
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  maritalStatus String?
+  dateOfBirth   DateTime?
+  currentJob    String?
+  bio           String?
+  avatarUrl     String?
+  qrCodeUrl     String?
 
-  refreshTokens        RefreshToken[]
-  emailTokens          EmailVerificationToken[]
-  ad                   Ad?
-  reportsMade          Report[] @relation("ReportsMade")
-  reportsReceived      Report[] @relation("ReportsReceived")
-  auditLogs            AuditLog[]
+  profileViewsCount Int           @default(0)
+  profileViews      ProfileView[] @relation("ProfileOwnerViews")
+  viewedProfiles    ProfileView[] @relation("ProfileViewerViews")
+
+  facebookUrl  String?
+  instagramUrl String?
+  githubUrl    String?
+  threadsUrl   String?
+  linkedinUrl  String?
+  twitterUrl   String?
+  youtubeUrl   String?
+
+  whatsappNumber String?
+  phoneNumber    String?
+
+  otherContactMethod String?
+  contactEmail       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshTokens       RefreshToken[]
+  emailTokens         EmailVerificationToken[]
+  resetPasswordTokens ResetPasswordToken[]
+
+  ad              Ad?
+  reportsMade     Report[]   @relation("ReportsMade")
+  reportsReceived Report[]   @relation("ReportsReceived")
+  auditLogs       AuditLog[]
+}
+
+model ResetPasswordToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ProfileView {
+  id       String  @id @default(cuid())
+  userId   String
+  user     User    @relation("ProfileOwnerViews", fields: [userId], references: [id], onDelete: Cascade)
+  viewerId String?
+  viewer   User?   @relation("ProfileViewerViews", fields: [viewerId], references: [id], onDelete: SetNull)
+
+  ipHash    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([viewerId])
 }
 
 model Ad {
-  id               String   @id @default(cuid())
+  id               String           @id @default(cuid())
   relationshipType RelationshipType
   title            String
-  description      String
-  status           AdStatus @default(draft)
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  description      String           @db.LongText
+  status           AdStatus         @default(draft)
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
-  reports          Report[]
+  reports Report[]
 }
 
 model Report {
-  id           String   @id @default(cuid())
-  reason       String
-  description  String?
-  reporterId   String
-  reporter     User     @relation("ReportsMade", fields: [reporterId], references: [id])
+  id             String       @id @default(cuid())
+  reason         String
+  description    String?
+  reporterId     String
+  reporter       User         @relation("ReportsMade", fields: [reporterId], references: [id])
   reportedUserId String?
-  reportedUser   User?   @relation("ReportsReceived", fields: [reportedUserId], references: [id])
-  adId         String?
-  ad           Ad?      @relation(fields: [adId], references: [id])
-  status       ReportStatus @default(pending)
-  createdAt    DateTime @default(now())
+  reportedUser   User?        @relation("ReportsReceived", fields: [reportedUserId], references: [id])
+  adId           String?
+  ad             Ad?          @relation(fields: [adId], references: [id])
+  status         ReportStatus @default(pending)
+  createdAt      DateTime     @default(now())
 }
 
 model RefreshToken {
@@ -134,4 +180,10 @@ enum ReportStatus {
   pending
   reviewed
   rejected
+}
+
+enum ProfileVisibility {
+  public
+  members
+  verified
 }
