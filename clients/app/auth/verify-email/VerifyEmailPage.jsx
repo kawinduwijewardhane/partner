@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Container from "@/components/layout/Container";
 import Button from "@/components/ui/Button";
 
-export default function VerifyEmailPage({ searchParams }) {
+export default function VerifyEmailPage() {
   const router = useRouter();
-  const token = searchParams?.token;
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const [status, setStatus] = useState("loading");
   const [email, setEmail] = useState("");
@@ -28,6 +29,7 @@ export default function VerifyEmailPage({ searchParams }) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token }),
+            credentials: "include",
           }
         );
 
@@ -41,7 +43,7 @@ export default function VerifyEmailPage({ searchParams }) {
         toast.success("Email verified successfully");
 
         setTimeout(() => {
-          router.push("/create_ad");
+          router.push("/users/profile");
         }, 2000);
       } catch (err) {
         setStatus("error");
@@ -87,7 +89,6 @@ export default function VerifyEmailPage({ searchParams }) {
   return (
     <section className="py-24 bg-white">
       <Container className="max-w-md text-center">
-
         {status === "loading" && (
           <>
             <h1 className="text-3xl font-bold text-zinc-900">
@@ -116,7 +117,6 @@ export default function VerifyEmailPage({ searchParams }) {
             <h1 className="text-3xl font-bold text-zinc-900">
               Verification Failed
             </h1>
-
             <p className="mt-4 text-sm text-zinc-600">
               The verification link may have expired or is invalid.
               You can request a new verification email below.
@@ -153,7 +153,6 @@ export default function VerifyEmailPage({ searchParams }) {
             </p>
           </>
         )}
-
       </Container>
     </section>
   );

@@ -1,5 +1,5 @@
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 
 export const env = {
   PORT: process.env.PORT || 5000,
@@ -19,4 +19,5 @@ export const env = {
   CDN_SSH_USER: process.env.CDN_SSH_USER,
   CDN_UPLOAD_PATH: process.env.CDN_UPLOAD_PATH,
   CDN_BASE_URL: process.env.CDN_BASE_URL,
-}
+  APP_NAME: process.env.APP_NAME,
+};
